@@ -32,7 +32,10 @@ Note: it ***must be*** required before you define any pings, otherwise you wont 
     Pings can be sent as with regular way, and also with `pings:sendWithKey(ping_name, key_name, ...args)`. Setting `key_name` to false will send ping without encryption.
 
 ### Contents:
-* `pings.lua` - main script of library.
+* `pings.lua` - Main script of library.\
+    Functions:
+    * `sendWithKey(ping_name, key_name, ...args)` - Sends ping with specified key
+    * `registerWithKey(ping_name, func, key_name)` - Registers ping that by default will be sent with specified key.
 * `serializer.lua` - Script used to turn your ping arguments into byte script.\
     Functions:
     * `serialize(...args)` - serializes all arguments provided into one byte string.

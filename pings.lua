@@ -21,7 +21,7 @@ else
     _G[settings.encrypted_pings_variable] = encrypted_pings;
 end
 
-local ping_invokers = {};
+local encrypted_pings_table = {};
 
 local encrypted_pings_metatable = {};
 
@@ -31,9 +31,9 @@ local function getHash(key_name)
     return bit32.bxor(util.hashFromSource(k.secret)), k.secret;
 end
 
-local function createFunctionRunner(k)
+local function createFunctionRunner(k, key)
     return function (...)
-        ping_invokers:sendWithKey(k, nil, ...);
+        encrypted_pings_table:sendWithKey(k, key, ...);
     end
 end
 
@@ -72,15 +72,19 @@ local function createFunctionWrapper(func)
 end
 
 function encrypted_pings_metatable:__index(k)
-    return ping_invokers[k];
+    return encrypted_pings_table[k];
 end
 
 function encrypted_pings_metatable:__newindex(k, v)
-    builtin_pings[k] = createFunctionWrapper(v);
-    ping_invokers[k] = createFunctionRunner(k);
+    encrypted_pings_table:registerWithKey(k,v);
 end
 
-function ping_invokers:sendWithKey(ping_name, key_name, ...)
+function encrypted_pings_table:registerWithKey(name, func, key)
+    builtin_pings[name] = createFunctionWrapper(func);
+    encrypted_pings_table[name] = createFunctionRunner(name, key);
+end
+
+function encrypted_pings_table:sendWithKey(ping_name, key_name, ...)
     local key, secret;
     if (key_name ~= false) then
         key, secret = getHash(key_name);
