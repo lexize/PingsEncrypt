@@ -25,8 +25,13 @@ local encrypted_pings_table = {};
 
 local encrypted_pings_metatable = {};
 
-local function getHash(key_name)
-    local k = settings.keys[key_name or settings.default_key];
+local function getHash(key)
+    local k;
+    if (type(key) == "table") then
+        k = key;
+    else
+        k = settings.keys[key or settings.default_key];
+    end
     if (k == nil) then return nil end;
     return bit32.bxor(util.hashFromSource(k.secret)), k.secret;
 end
@@ -84,10 +89,10 @@ function encrypted_pings_table:registerWithKey(name, func, key)
     encrypted_pings_table[name] = createFunctionRunner(name, key);
 end
 
-function encrypted_pings_table:sendWithKey(ping_name, key_name, ...)
+function encrypted_pings_table:sendWithKey(ping_name, k, ...)
     local key, secret;
-    if (key_name ~= false) then
-        key, secret = getHash(key_name);
+    if (k ~= false) then
+        key, secret = getHash(k);
     end
     if (key == nil) then
         builtin_pings[ping_name](nil, ...);
