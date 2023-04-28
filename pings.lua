@@ -9,7 +9,7 @@ local path = ...;
 local settings = require(#path > 0 and path..".settings" or "settings");
 local util = require(#path > 0 and path..".util" or "util");
 local serializer = require(#path > 0 and path..".serializer" or "serializer");
-local stream = require(#path > 0 and path..".strean" or "strean");
+local stream = require(#path > 0 and path..".stream" or "stream");
 
 local builtin_pings = pings;
 local encrypted_pings = {};
