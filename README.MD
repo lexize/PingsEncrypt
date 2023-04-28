@@ -10,7 +10,7 @@ To start using library you have to configure it at first. Available settings:
   * `replace_pings` - Replace builtin pings variable or not? Must be set before library initialization (requiring).
   * `builtin_pings_variable` - Name of variable where builtin pings will be stored, if `replace_pings` is true. Default value - `"native_pings"`. Must be set before library initialization.
   * `encrypted_pings_variable` - Name of variable where pings wrapper will be stored, if `replace_pings` is false. Default value - `"encrypted_pings"`. Must be set before library initialization.
-  * `default_key` - Default key library will use when sending ping, if ping was sent regular way, and not with `pings:sendWithKey()`. Set this value to `nil` to disable ping encryption without using `pings:sendWithKey()`. Default value - `"world"`.
+  * `default_key` - Default key name library will use when sending ping, if ping was sent regular way, and not with `pings:sendWithKey()`. Set this value to `nil` to disable ping encryption without using `pings:sendWithKey()`. Default value - `"world"`.
 * Create key(s).
 
     This can be done after requiring library, but this is still important part.
@@ -29,13 +29,13 @@ To start using library you have to configure it at first. Available settings:
 * Require library.\
 Note: it ***must be*** required before you define any pings, otherwise you wont be able to call pings you defined before through this lib.
 * Send pings!\
-    Pings can be sent as with regular way, and also with `pings:sendWithKey(ping_name, key_name, ...args)`. Setting `key_name` to false will send ping without encryption.
+    Pings can be sent as with regular way, and also with `pings:sendWithKey(ping_name, key, ...args)`. Setting `key to false will send ping without encryption.
 
 ### Contents:
 * `pings.lua` - Main script of library.\
     Functions:
-    * `sendWithKey(ping_name, key_name, ...args)` - Sends ping with specified key
-    * `registerWithKey(ping_name, func, key_name)` - Registers ping that by default will be sent with specified key.
+    * `sendWithKey(ping_name, key, ...args)` - Sends ping with specified key
+    * `registerWithKey(ping_name, func, key)` - Registers ping that by default will be sent with specified key.
 * `serializer.lua` - Script used to turn your ping arguments into byte script.\
     Functions:
     * `serialize(...args)` - serializes all arguments provided into one byte string.
