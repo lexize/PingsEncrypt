@@ -40,7 +40,7 @@ local types = {
     ZERO_MAT_3 = 26, -- IMPLEMENTED
     ZERO_MAT_4 = 27, -- IMPLEMENTED
 
-    TABLE_END = 28 -- HELPER TAG
+    END = 255 -- HELPER TAG
 }
 -- I took these three functions from idk where but they saved me and my sanity
 local function grab_byte(v)
@@ -134,14 +134,14 @@ function serializationFunc.table(tbl)
         for _, kv in pairs(kvs) do
             out = out .. serializer.serialize(kv[1], kv[2]);
         end
-        out = out .. string.char(types.TABLE_END);
+        out = out .. string.char(types.END);
         return types.TABLE, string.byte(out, 1, #out);
     else
-        local lengthBytes = string.char(util.numToBytes(#tbl, 2));
-        local out = lengthBytes;
+        local out = "";
         for _, v in ipairs(tbl) do
             out = out .. serializer.serialize(v);
         end
+        out = out .. string.char(types.END);
         return types.LIST, string.byte(out, 1, #out);
     end
 end
@@ -281,12 +281,12 @@ end
 ---@param stream ByteStream
 ---@return table
 deserializationFuncs[types.LIST] = function (stream)
-    local length = util.numFromBytes(stream:read(), stream:read());
     local t = {};
-    for i = 1, length do
-        local val_type = stream:read();
-        local val = des(val_type)(stream);
+    local i = stream:read();
+    while (i ~= nil and i ~= types.END) do
+        local val = des(i)(stream);
         t[#t+1] = val;
+        i = stream:read();
     end
     return t;
 end
@@ -307,7 +307,7 @@ deserializationFuncs[types.TABLE] = function (stream)
     local t = {};
     local i = stream:read();
     local k = nil;
-    while (not (i == nil or i == types.TABLE_END)) do
+    while (not (i == nil or i == types.END)) do
         local v = des(i)(stream);
         if (k ~= nil) then
             t[k] = v;
